@@ -1,4 +1,4 @@
-name: React+Vite CI
+name: React + Vite CI/CD
 
 on:
   push:
@@ -7,20 +7,30 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
-      - name: check out code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/ssetup-node@v4
         with:
           node-version: "18.x"
 
-      - name: depencies Install
+      - name: Install dependencies
         run: npm ci
 
-      - name: Run build
+      - name: Run Build
         run: npm run build
+
+      - name: Run lint checks
+        run: npm run lint > lint_result.txt 2>&1
+        continue-on-error: true
+
+      - name: Upload lint Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint_result
+          path: lint_result.txt
